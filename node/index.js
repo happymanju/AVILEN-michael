@@ -11,15 +11,12 @@ const server = http.createServer((req, res) => {
       });
    }
    if (endpoint === '/api') {
-      // ここに処理を記述してください。  
-      //HTMLのフロントの方からボタンを押すと'/api'のendpointをアクセスし、ここにあるコードが発動
+      // ここに処理を記述してください。 
 
-      //FizzBuzzのアルゴリズムの基本はできた
-      function fizzBuzz(pattern, callback) {
-         const js = JSON.parse(pattern);
+      function fizzBuzz(pattern) {
          const result = { data: [] };
 
-         for (obj of js.obj) {
+         for (obj of pattern["obj"]) {
             if (obj.num % 3 === 0 && obj.num % 5 === 0) {
                result.data.push("FizzBuzz");
             } else if (obj.num % 3 === 0) {
@@ -30,18 +27,23 @@ const server = http.createServer((req, res) => {
                result.data.push(obj.num);
             }
          }
-         callback(result);
+         return result;
       }
 
-
-      //TODO：PromiseやCallbackなどを使ってpatternのデータをアクセス
-      //patternが最初に送られる時点でXMLrequestのまま
-
-      fizzBuzz(req.body, (result) => {
+      req.on("data", (data) => {
+         const js = JSON.parse(data);
+         const result = JSON.stringify(fizzBuzz(js));
          res.writeHead(200, { 'Content-Type': 'application/json' });
-         res.write();
-         res.close();
-      })
+         res.write(result);
+         res.end();
+
+      });
+
+
+
+
+
+
 
 
    }
